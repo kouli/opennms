@@ -34,6 +34,7 @@ import org.junit.runners.MethodSorters;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+@org.junit.Ignore
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MenuHeaderIT extends OpenNMSSeleniumTestCase {
     @Test
