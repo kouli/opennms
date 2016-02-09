@@ -1,32 +1,55 @@
 'use strict';
 
-var configureCasper = function(casper) {
-	casper.on('remote.message', function(message) {
-		casper.log(message, 'debug');
+function CasperConfigurer(casper) {
+	this.casper = casper;
+
+	this.initialize();
+}
+
+CasperConfigurer.prototype.initialize = function() {
+	var self = this;
+	self.configureViewport();
+	self.configureLogging();
+	self.enableScreenshots();
+	self.enableXunit();
+};
+
+CasperConfigurer.prototype.configureLogging = function() {
+	var self = this;
+	self.casper.on('remote.message', function(message) {
+		self.casper.log(message, 'debug');
 	});
-	casper.options.viewportSize = {
+};
+
+CasperConfigurer.prototype.configureViewport = function() {
+	var self = this;
+	self.casper.options.viewportSize = {
 		width: 1920,
 		height: 1024
 	};
-	casper.options.onWaitTimeout = function() {
+};
+
+CasperConfigurer.prototype.enableScreenshots = function() {
+	var self = this;
+	self.casper.options.onWaitTimeout = function() {
 		this.capture('target/screenshots/timeout.png');
-		casper.exit(1);
+		self.casper.exit(1);
 	};
-	casper.test.on('fail', function(failure) {
+	self.casper.test.on('fail', function(failure) {
 		if (failure && typeof failure.message === 'string' || failure.message instanceof String) {
 			var message = failure.message.replace(/[^A-Za-z0-9]+/gm, '-').replace(/^\-/, '').replace(/\-$/, '').toLowerCase();
-			casper.capture('target/screenshots/' + message + '.png');
+			self.casper.capture('target/screenshots/' + message + '.png');
 		} else {
 			console.log('Unsure how to handle failure: ' + JSON.stringify(failure));
 		}
-		casper.exit(1);
 	});
+};
 
-	/*
-	var testName;
-	if (casper.cli && casper.cli.args) {
-		for (var i=0, len=casper.cli.args.length, arg; i < len; i++) {
-			arg = casper.cli.args[i];
+CasperConfigurer.prototype.enableXunit = function() {
+	var testName, self = this;
+	if (self.casper.cli && self.casper.cli.args) {
+		for (var i=0, len=self.casper.cli.args.length, arg; i < len; i++) {
+			arg = self.casper.cli.args[i];
 			if (arg.indexOf('src/test/javascript/tests') === 0) {
 				testName = arg.replace('src/test/javascript/tests/', '').replace(/[^A-Za-z0-9-]+/, '-').replace(/\.js$/, '');
 			}
@@ -34,16 +57,15 @@ var configureCasper = function(casper) {
 	}
 
 	if (testName) {
-		casper.test.on('tests.complete', function() {
+		self.casper.test.on('tests.complete', function() {
 			console.log('Tests complete.');
 			this.renderResults(undefined, undefined, 'target/failsafe-results/' + testName + '.xml');
 		});
 	} else {
 		console.log('WARNING: Unable to infer test name from casper arguments.  Unable to write xUnit output.');
 	}
-	*/
 };
 
-module.exports = {
-	configure: configureCasper
-};
+module.exports = function(casper) {
+	return new CasperConfigurer(casper);
+}

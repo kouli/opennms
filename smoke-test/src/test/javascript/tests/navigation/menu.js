@@ -163,12 +163,11 @@ var expected = {
 };
 
 casper.test.begin('OpenNMS Nav Bar Menu', numTests, function suite(test) {
-	require('../../util/init').configure(casper);
+	var configurer = require('../../util/init')(casper),
+		login = require('../../util/login')(casper),
+		utils = require('utils');
 
-	var login = require('../../util/login');
-	var utils = require('utils');
-
-	login.go(casper);
+	login.login();
 
 	var getElement = function(selector) {
 		var elements = rootElement.querySelectorAll(selector);
