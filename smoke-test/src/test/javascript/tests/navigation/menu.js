@@ -1,27 +1,28 @@
 'use strict';
 
+//casper.exit(1);
 var numTests = 63;
 
 var expected = {
 	'Search': {
-		href: 'http://localhost:8980/opennms/element/index.jsp',
+		href: '/element/index.jsp',
 		linkPageSelector: 'h3[class="panel-title"]:first-of-type',
 		linkPageText: 'Search for Nodes'
 	},
 	'Info': {
 		children: {
 			'Nodes': {
-				href: 'http://localhost:8980/opennms/element/nodeList.htm',
+				href: '/element/nodeList.htm',
 				linkPageSelector: 'h3[class="panel-title"]',
 				linkPageText: 'Nodes'
 			},
 			'Assets': {
-				href: 'http://localhost:8980/opennms/asset/index.jsp',
+				href: '/asset/index.jsp',
 				linkPageSelector: 'h3[class="panel-title"]',
 				linkPageText: 'Search Asset Information'
 			},
 			'Path Outages': {
-				href: 'http://localhost:8980/opennms/pathOutage/index.jsp',
+				href: '/pathOutage/index.jsp',
 				linkPageSelector: 'h3[class="panel-title"]',
 				linkPageText: 'All Path Outages'
 			}
@@ -30,98 +31,98 @@ var expected = {
 	'Status': {
 		children: {
 			'Events': {
-				href: 'http://localhost:8980/opennms/event/index',
+				href: '/event/index',
 				linkPageSelector: 'h3[class="panel-title"]',
 				linkPageText: 'Event Queries'
 			},
 			'Alarms': {
-				href: 'http://localhost:8980/opennms/alarm/index.htm',
+				href: '/alarm/index.htm',
 				linkPageSelector: 'h3[class="panel-title"]',
 				linkPageText: 'Alarm Queries'
 			},
 			'Notifications': {
-				href: 'http://localhost:8980/opennms/notification/index.jsp',
+				href: '/notification/index.jsp',
 				linkPageSelector: 'h3[class="panel-title"]',
 				linkPageText: 'Notification queries'
 			},
 			'Outages': {
-				href: 'http://localhost:8980/opennms/outage/index.jsp',
+				href: '/outage/index.jsp',
 				linkPageSelector: 'h3[class="panel-title"]',
 				linkPageText: 'Outage Menu'
 			},
-			'Surveillance': 'http://localhost:8980/opennms/surveillance-view.jsp',
-			'Heatmap': 'http://localhost:8980/opennms/heatmap/index.jsp',
+			'Surveillance': '/surveillance-view.jsp',
+			'Heatmap': '/heatmap/index.jsp',
 			'Distributed Status': {
-				href: 'http://localhost:8980/opennms/distributedStatusSummary.htm',
+				href: '/distributedStatusSummary.htm',
 				linkPageSelector: 'h3[class="panel-title"]',
 				linkPageText: 'Distributed Status Summary Error: No Applications Defined'
 			}
 		}
 	},
 	'Reports': {
-		href: 'http://localhost:8980/opennms/report/index.jsp',
+		href: '/report/index.jsp',
 		linkPageSelector: 'h3[class="panel-title"]',
 		linkPageText: 'Reports',
 		children: {
 			'Charts': {
-				href: 'http://localhost:8980/opennms/charts/index.jsp',
+				href: '/charts/index.jsp',
 				linkPageSelector: 'img[src="charts?chart-name=sample-bar-chart"]'
 			},
 			'Resource Graphs': {
-				href: 'http://localhost:8980/opennms/graph/index.jsp',
+				href: '/graph/index.jsp',
 				linkPageSelector: 'h3[class="panel-title"]',
 				linkPageText: 'Network Performance Data'
 			},
 			'KSC Reports': {
-				href: 'http://localhost:8980/opennms/KSC/index.htm',
+				href: '/KSC/index.htm',
 				linkPageSelector: 'h3[class="panel-title"]',
 				linkPageText: 'Node & Domain Interface Reports'
 			},
 			'Database Reports': {
-				href: 'http://localhost:8980/opennms/report/database/index.htm',
+				href: '/report/database/index.htm',
 				linkPageSelector: 'h3[class="panel-title"]',
 				linkPageText: 'Database Reports'
 			},
 			'Statistics': {
-				href: 'http://localhost:8980/opennms/statisticsReports/index.htm',
+				href: '/statisticsReports/index.htm',
 				linkPageSelector: 'h3[class="panel-title"]',
 				linkPageText: 'Statistics Report List'
 			}
 		}
 	},
 	'Dashboards': {
-		href: 'http://localhost:8980/opennms/dashboards.htm',
+		href: '/dashboards.htm',
 		linkPageSelector: 'h3[class="panel-title"]',
 		linkPageText: 'OpenNMS Dashboards',
 		children: {
-			'Dashboard': 'http://localhost:8980/opennms/dashboard.jsp',
+			'Dashboard': '/dashboard.jsp',
 			'Ops Board': {
-				href: 'http://localhost:8980/opennms/vaadin-wallboard',
+				href: '/vaadin-wallboard',
 				linkPageSelector: 'div.v-label.v-widget',
 				linkPageText: 'Nothing to display'
 			}
 		}
 	},
 	'Maps': {
-		href: 'http://localhost:8980/opennms/maps.htm',
+		href: '/maps.htm',
 		linkPageSelector: 'h3[class="panel-title"]',
 		linkPageText: 'Maps',
 		children: {
-			'Distributed': 'http://localhost:8980/opennms/RemotePollerMap/index.jsp',
+			'Distributed': '/RemotePollerMap/index.jsp',
 			'Topology': {
-				href: 'http://localhost:8980/opennms/topology',
+				href: '/topology',
 				linkPageSelector: 'table.topoHudDisplay div.gwt-Label',
 				linkPageText: 'Vertices'
 			},
 			'Geographical': {
-				href: 'http://localhost:8980/opennms/node-maps',
+				href: '/node-maps',
 				linkPageSelector: 'div[for="alarmControl"]',
 				linkPageText: 'Show Severity >='
 			}
 		}
 	},
 	'admin': {
-		href: 'http://localhost:8980/opennms/account/selfService/index.jsp',
+		href: '/account/selfService/index.jsp',
 		linkPageSelector: 'h3[class="panel-title"]',
 		linkPageText: 'User Account Self-Service',
 		children: {
@@ -130,31 +131,31 @@ var expected = {
 			},
 			'Configure OpenNMS': {
 				name: 'nav-admin-admin',
-				href: 'http://localhost:8980/opennms/admin/index.jsp',
+				href: '/admin/index.jsp',
 				linkPageSelector: 'h3[class="panel-title"]',
 				linkPageText: 'Performance Measurement'
 			},
 			'Quick-Add Node': {
 				name: 'nav-admin-quick-add',
-				href: 'http://localhost:8980/opennms/admin/node/add.htm',
+				href: '/admin/node/add.htm',
 				linkPageSelector: 'h3[class="panel-title"]',
 				linkPageText: 'Node Quick-Add'
 			},
 			'Help/Support': {
 				name: 'nav-admin-support',
-				href: 'http://localhost:8980/opennms/support/index.htm',
+				href: '/support/index.htm',
 				linkPageSelector: 'h3[class="panel-title"]',
 				linkPageText: 'Commercial Support'
 			},
 			'Change Password': {
 				name: 'nav-admin-self-service',
-				href: 'http://localhost:8980/opennms/account/selfService/index.jsp',
+				href: '/account/selfService/index.jsp',
 				linkPageSelector: 'h3[class="panel-title"]',
 				linkPageText: 'User Account Self-Service'
 			},
 			'Log Out': {
 				name: 'nav-admin-logout',
-				href: 'http://localhost:8980/opennms/j_spring_security_logout',
+				href: '/j_spring_security_logout',
 				linkPageSelector: 'label[for="input_j_username"]',
 				linkPageText: 'Username'
 			}
@@ -163,11 +164,10 @@ var expected = {
 };
 
 casper.test.begin('OpenNMS Nav Bar Menu', numTests, function suite(test) {
-	var configurer = require('../../util/init')(casper),
-		login = require('../../util/login')(casper),
+	var opennms = require('../../util/opennms')(casper),
 		utils = require('utils');
 
-	login.login();
+	opennms.login();
 
 	var getElement = function(selector) {
 		var elements = rootElement.querySelectorAll(selector);
@@ -191,13 +191,13 @@ casper.test.begin('OpenNMS Nav Bar Menu', numTests, function suite(test) {
 
 		var entry = obj[text];
 		if (typeof entry === 'string') {
-			ret.href = entry;
+			ret.href = opennms.root() + entry;
 		} else {
 			if (entry.name) {
 				ret.selector = entry.name;
 			}
 			if (entry.href) {
-				ret.href = entry.href;
+				ret.href = opennms.root() + entry.href;
 			}
 			if (entry.linkPageSelector) {
 				ret.linkPageSelector = entry.linkPageSelector;
@@ -287,10 +287,10 @@ casper.test.begin('OpenNMS Nav Bar Menu', numTests, function suite(test) {
 	}
 
 	////// Special Cases //////
-	login.login(casper);
+	opennms.login(casper);
 
 	// surveillance view
-	casper.thenOpen('http://localhost:8980/opennms/surveillance-view.jsp');
+	casper.thenOpen(opennms.root() + '/surveillance-view.jsp');
 	casper.waitForSelector('#surveillance-view-ui');
 	casper.then(function() {
 		this.page.switchToChildFrame(0);
@@ -304,7 +304,7 @@ casper.test.begin('OpenNMS Nav Bar Menu', numTests, function suite(test) {
 	casper.back();
 
 	// heatmap
-	casper.thenOpen('http://localhost:8980/opennms/heatmap/index.jsp');
+	casper.thenOpen(opennms.root() + '/heatmap/index.jsp');
 	casper.waitForSelector('#coreweb', function() {
 		test.assertSelectorHasText('h3[class="panel-title"] > a', 'Alarm Heatmap  (by Categories)', 'Heatmap iframe loads');
 		this.page.switchToParentFrame();
@@ -312,7 +312,7 @@ casper.test.begin('OpenNMS Nav Bar Menu', numTests, function suite(test) {
 	casper.back();
 
 	// dashboard
-	casper.thenOpen('http://localhost:8980/opennms/dashboard.jsp');
+	casper.thenOpen(opennms.root() + '/dashboard.jsp');
 	casper.waitForSelector('#surveillance-view-ui');
 	casper.then(function() {
 		this.page.switchToChildFrame(0);
@@ -326,7 +326,7 @@ casper.test.begin('OpenNMS Nav Bar Menu', numTests, function suite(test) {
 	casper.back();
 
 	// distributed maps
-	casper.thenOpen('http://localhost:8980/opennms/RemotePollerMap/index.jsp');
+	casper.thenOpen(opennms.root() + '/RemotePollerMap/index.jsp');
 	casper.waitForSelector('#app');
 	casper.then(function() {
 		this.page.switchToChildFrame(0);
@@ -339,10 +339,5 @@ casper.test.begin('OpenNMS Nav Bar Menu', numTests, function suite(test) {
 	});
 	casper.back();
 
-	casper.run(function() {
-		setTimeout(function() {
-			test.done();
-			phantom.exit();
-		},0);
-	});
+	opennms.finished(test);
 });
