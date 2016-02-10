@@ -167,6 +167,7 @@ casper.test.begin('OpenNMS Nav Bar Menu', numTests, function suite(test) {
 	var opennms = require('../../util/opennms')(casper),
 		utils = require('utils');
 
+	opennms.initialize();
 	opennms.login();
 
 	var getElement = function(selector) {

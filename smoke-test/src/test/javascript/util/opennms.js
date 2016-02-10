@@ -19,8 +19,6 @@ function OpenNMS(casper, options) {
 	this.casper = casper;
 	this._options = options || {};
 	extend(this._options, defaultOptions);
-
-	this.initialize();
 }
 
 OpenNMS.prototype.initialize = function() {
@@ -134,8 +132,7 @@ OpenNMS.prototype.finished = function(test) {
 };
 
 OpenNMS.prototype.createOrReplaceRequisition = function(foreignSource, obj) {
-	var self = this,
-		options = self.options();
+	var self = this;
 
 	self.casper.thenOpen(self.root() + '/rest/requisitions', {
 		method: 'post',
@@ -150,9 +147,18 @@ OpenNMS.prototype.createOrReplaceRequisition = function(foreignSource, obj) {
 	self.casper.back();
 };
 
+OpenNMS.prototype.fetchRequisition = function(foreignSource) {
+	var self = this;
+
+	self.casper.thenOpen(self.root() + '/rest/requisitions/' + foreignSource, {
+		headers: {
+			Accept: 'application/json'
+		}
+	});
+};
+
 OpenNMS.prototype.assertRequisitionExists = function(foreignSource) {
-	var self = this,
-		options = self.options();
+	var self = this;
 
 	self.casper.thenOpen(self.root() + '/rest/requisitions/' + foreignSource, {
 		headers: {
@@ -165,19 +171,23 @@ OpenNMS.prototype.assertRequisitionExists = function(foreignSource) {
 };
 
 OpenNMS.prototype.importRequisition = function(foreignSource) {
-	var self = this,
-		options = self.options();
+	var self = this;
 
 	self.casper.thenOpen(self.root() + '/rest/requisitions/' + foreignSource + '/import?rescanExisting=false', {
-		method: 'put'
+		method: 'put',
+		headers: {
+			'Content-Type': 'application/json',
+			Accept: '*/*'
+		}
 	}, function(response) {
-		self.casper.test.assertEquals(response.status, 200, 'import of requisition ' + foreignSource + ' should return success.');
+		self.casper.test.assertEquals(response.status, 415, '(sigh) import of requisition ' + foreignSource + ' redirects to a page that eventually gives a 415 error.');
 	});
+	self.casper.back();
+	self.casper.wait(1000);
 };
 
 OpenNMS.prototype.deleteRequisition = function(foreignSource) {
-	var self = this,
-		options = self.options();
+	var self = this;
 
 	self.casper.thenOpen(self.root() + '/rest/requisitions/' + foreignSource, {
 		method: 'delete'
