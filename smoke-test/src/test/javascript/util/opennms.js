@@ -164,6 +164,17 @@ OpenNMS.prototype.assertRequisitionExists = function(foreignSource) {
 	self.casper.back();
 };
 
+OpenNMS.prototype.importRequisition = function(foreignSource) {
+	var self = this,
+		options = self.options();
+
+	self.casper.thenOpen(self.root() + '/rest/requisitions/' + foreignSource + '/import?rescanExisting=false', {
+		method: 'put'
+	}, function(response) {
+		self.casper.test.assertEquals(response.status, 200, 'import of requisition ' + foreignSource + ' should return success.');
+	});
+};
+
 OpenNMS.prototype.deleteRequisition = function(foreignSource) {
 	var self = this,
 		options = self.options();
