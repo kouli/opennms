@@ -7,25 +7,20 @@ var foreignSource = 'quick-add-node';
 var testNodeIpAddress = '192.0.2.123';
 var testNodeLabel = 'AddNodePageTest';
 
-casper.test.begin('Quick-Add Node', 10, {
+casper.test.begin('Quick-Add Node', 7, {
 	setUp: function() {
 		opennms.initialize();
-	},
-
-	tearDown: function() {
-		opennms.createOrReplaceRequisition(foreignSource);
-		opennms.importRequisition(foreignSource);
-		opennms.deleteRequisition(foreignSource);
+		opennms.login();
+		opennms.ensureNoRequisitions();
 	},
 
 	test: function(test) {
-		opennms.login();
 		opennms.createOrReplaceRequisition(foreignSource);
 		opennms.assertRequisitionExists(foreignSource);
 		opennms.importRequisition(foreignSource);
 
 		casper.thenOpen(opennms.root() + '/admin/node/add.htm', function() {
-			test.assertSelectorHasText('h3[class="panel-title"]', 'Basic Attributes (required)');
+			test.assertSelectorHasText('h3.panel-title', 'Basic Attributes (required)');
 		});
 		casper.then(function() {
 			this.fill('form', {

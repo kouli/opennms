@@ -142,7 +142,10 @@ OpenNMS.prototype.createOrReplaceRequisition = function(foreignSource, obj) {
 			'Content-Type': 'application/json'
 		}
 	}, function(response) {
-		self.casper.test.assertEquals(response.status, 200, 'POST of requisition ' + foreignSource + ' should return success.');
+		if (response.status !== 200) {
+			console.log('Unexpected response: ' + JSON.stringify(response));
+			throw new CasperError('POST of requisition ' + foreignSource + ' should return success.');
+		}
 	});
 	self.casper.back();
 };
@@ -165,7 +168,10 @@ OpenNMS.prototype.assertRequisitionExists = function(foreignSource) {
 			Accept: 'application/json'
 		}
 	}, function(response) {
-		self.casper.test.assertEquals(response.status, 200, 'GET of requisition ' + foreignSource + ' should return success.');
+		if (response.status !== 200) {
+			console.log('Unexpected response: ' + JSON.stringify(response));
+			throw new CasperError('GET of requisition ' + foreignSource + ' should return success.');
+		}
 	});
 	self.casper.back();
 };
@@ -173,17 +179,20 @@ OpenNMS.prototype.assertRequisitionExists = function(foreignSource) {
 OpenNMS.prototype.importRequisition = function(foreignSource) {
 	var self = this;
 
-	self.casper.thenOpen(self.root() + '/rest/requisitions/' + foreignSource + '/import?rescanExisting=false', {
+	self.casper.thenOpen(self.root() + '/rest/requisitions/' + foreignSource + '/import', {
 		method: 'put',
 		headers: {
 			'Content-Type': 'application/json',
 			Accept: '*/*'
 		}
 	}, function(response) {
-		self.casper.test.assertEquals(response.status, 415, '(sigh) import of requisition ' + foreignSource + ' redirects to a page that eventually gives a 415 error.');
+		if (response.status !== 415) {
+			console.log('Unexpected response: ' + JSON.stringify(response));
+			throw new CasperError('(sigh) import of requisition ' + foreignSource + ' redirects to a page that eventually gives a 415 error.');
+		}
 	});
 	self.casper.back();
-	self.casper.wait(1000);
+	self.casper.wait(5000);
 };
 
 OpenNMS.prototype.deleteRequisition = function(foreignSource) {
@@ -192,9 +201,58 @@ OpenNMS.prototype.deleteRequisition = function(foreignSource) {
 	self.casper.thenOpen(self.root() + '/rest/requisitions/' + foreignSource, {
 		method: 'delete'
 	}, function(response) {
-		self.casper.test.assertEquals(response.status, 200, 'DELETE of requisition ' + foreignSource + ' should return success.');
+		if (response.status !== 200) {
+			console.log('Unexpected response: ' + JSON.stringify(response));
+			throw new CasperError('DELETE of requisition ' + foreignSource + ' should return success.');
+		}
 	});
 	self.casper.back();
+};
+
+OpenNMS.prototype.ensureNoRequisitions = function() {
+	var self = this;
+
+	var enrLog = function(text) {
+		self.casper.echo('OpenNMS.ensureNoRequisitions: ' + text, 'INFO');
+	}
+
+	self.casper.thenOpen(self.root() + '/rest/requisitions', {
+		headers: {
+			Accept: 'application/json'
+		}
+	});
+
+	self.casper.then(function() {
+		var content = this.getPageContent();
+		if (content.indexOf('"model-import"') < 0) {
+			console.log('Unexpected content: ' + content);
+			throw new CasperError('"model-import" JSON field should be found');
+		}
+		var requisition = JSON.parse(this.getPageContent());
+		if (requisition.count > 0) {
+			for (var i=0; i < requisition.count; i++) {
+				var foreignSource = requisition['model-import'][i]['foreign-source'];
+				self.casper.then(function() {
+					enrLog('clearing ' + foreignSource);
+					self.createOrReplaceRequisition(foreignSource);
+				});
+				self.casper.wait(100);
+				self.casper.then(function() {
+					enrLog('importing empty ' + foreignSource);
+					self.importRequisition(foreignSource);
+				});
+				self.casper.wait(100);
+				self.casper.then(function() {
+					enrLog('deleting ' + foreignSource);
+					self.deleteRequisition(foreignSource);
+				});
+				self.casper.wait(100);
+			}
+		}
+		self.casper.then(function() {
+			self.casper.back();
+		});
+	});
 };
 
 module.exports = function(casper, options) {

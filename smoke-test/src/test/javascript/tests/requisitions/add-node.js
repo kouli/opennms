@@ -5,19 +5,14 @@ var opennms = require('../../util/opennms')(casper),
 
 var foreignSource = 'add-node-to-requisition-test';
 
-casper.test.begin('Add Node to Requisition', 4, {
+casper.test.begin('Add Node to Requisition', 3, {
 	setUp: function() {
 		opennms.initialize();
-	},
-
-	tearDown: function() {
-		opennms.deleteRequisition(foreignSource);
+		opennms.login();
+		opennms.ensureNoRequisitions();
 	},
 
 	test: function(test) {
-		opennms.login();
-		opennms.deleteRequisition(foreignSource);
-
 		casper.thenOpen(opennms.root() + '/admin/index.jsp');
 		casper.then(function() {
 			test.assertSelectorHasText('a[href="admin/ng-requisitions/app/index.jsp"]', 'Manage Provisioning Requisitions', 'Manage Provisioning Requisitions link exists.');
