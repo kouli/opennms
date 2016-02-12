@@ -1,5 +1,7 @@
 'use strict';
 
+var moment = require('moment');
+
 var defaultOptions = {
 	url: 'http://localhost:8980/opennms',
 	username: 'admin',
@@ -257,6 +259,44 @@ OpenNMS.prototype.ensureNoRequisitions = function() {
 		self.casper.then(function() {
 			self.casper.back();
 		});
+	});
+};
+
+OpenNMS.prototype.createEvent = function(ev) {
+	// $week[$wday], $mday $month[$month] $year $hour:$min:$sec o'clock $ZONE
+	var self = this,
+		now = moment.utc().format('dddd, DD MMMM YYYY HH:mm:ss [o\'clock] UTC');
+
+	if (!ev) {
+		throw new CasperError('No event!');
+	}
+	if (!ev.uei) {
+		throw new CasperError('Event is missing UEI!');
+	}
+	if (!ev.time) {
+		ev.time = now;
+	}
+	if (!ev.creationTime) {
+		ev['creation-time'] = now;
+	}
+	if (!ev.source) {
+		ev.source = 'SmokeTests';
+	}
+	self.casper.thenOpen(self.root() + '/rest/events', {
+		method: 'post',
+		headers: {
+			'Content-Type': 'application/json',
+			Accept: 'application/xml'
+		},
+		data: ev
+	}, function(response) {
+		if (response.status !== 200) {
+			console.log('Unexpected response: ' + JSON.stringify(response));
+			throw new CasperError('Creation of event ' + ev.uei + ' failed.');
+		}
+	});
+	self.casper.then(function() {
+		self.casper.back();
 	});
 };
 
