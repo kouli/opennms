@@ -3,8 +3,6 @@
 var opennms = require('../../util/opennms')(casper),
 	utils = require('utils');
 
-var numTests = 63;
-
 var expected = {
 	'Search': {
 		href: '/element/index.jsp',
@@ -165,7 +163,7 @@ var expected = {
 	}
 };
 
-casper.test.begin('OpenNMS Nav Bar Menu', numTests, {
+casper.test.begin('OpenNMS Nav Bar Menu', 63, {
 	setUp: function() {
 		opennms.initialize();
 		opennms.login();

@@ -3,8 +3,6 @@ function Selector(selector, text) {
 	this.text = text;
 }
 
-var numTests = 36;
-
 var links = {
 	// OpenNMS System
 	'System Configuration': 'OpenNMS Configuration',
@@ -47,7 +45,7 @@ var links = {
 	'JMX Configuration Generator': new Selector('div[id="content"] > iframe[src="osgi/jmx-config-tool"]')
 };
 
-casper.test.begin('Admin Page Links', numTests, function suite(test) {
+casper.test.begin('Admin Page Links', 36, function suite(test) {
 	var opennms = require('../../util/opennms')(casper),
 		utils = require('utils');
 

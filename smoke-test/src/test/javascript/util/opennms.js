@@ -53,8 +53,13 @@ var cleanText = function(text) {
 OpenNMS.prototype.enableScreenshots = function() {
 	var self = this;
 	self.casper.options.onWaitTimeout = function() {
+		this.capture('target/screenshots/timeout-wait.png');
+	};
+	self.casper.options.onTimeout = function() {
 		this.capture('target/screenshots/timeout.png');
-		self.casper.exit(1);
+	};
+	self.casper.options.onStepTimeout = function() {
+		this.capture('target/screenshots/timeout-step.png');
 	};
 	if (!self.casper._screenshotsEnabled) {
 		self.casper.test.on('fail', function(failure) {
