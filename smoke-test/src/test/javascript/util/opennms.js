@@ -36,7 +36,9 @@ OpenNMS.prototype.configureLogging = function() {
 		self.casper.on('remote.message', function(message) {
 			if (message) {
 				message.trim().split(/[\r\n]+/).map(function(line) {
-					console.log('console: ' + line);
+					if (line.indexOf('com.vaadin.client.VConsole') < 0) {
+						console.log('console: ' + line);
+					}
 				});
 			}
 		});
@@ -325,6 +327,29 @@ OpenNMS.prototype.createEvent = function(ev) {
 	self.casper.then(function() {
 		self.casper.back();
 	});
+};
+
+OpenNMS.prototype.scrollToElementWithText = function(type, text) {
+	var self = this;
+
+	self.casper.thenEvaluate(function(type, text) {
+		console.log('* Scrolling to "'+type+'" element with text "'+text+'"');
+		var elements = document.getElementsByTagName('span');
+		var element;
+		for (var i=0; i < elements.length; i++) {
+			if (elements[i].textContent === text) {
+				element = elements[i];
+				break;
+			}
+		}
+		if (element) {
+			element.scrollIntoView({
+				behavior: 'instant'
+			});
+		} else {
+			console.log('! Failed to find element.');
+		}
+	}, type, text);
 };
 
 module.exports = function(casper, options) {
