@@ -34,7 +34,11 @@ OpenNMS.prototype.configureLogging = function() {
 	var self = this;
 	if (!self.casper._loggingConfigured) {
 		self.casper.on('remote.message', function(message) {
-			self.casper.log(message, 'debug');
+			if (message) {
+				message.trim().split(/[\r\n]+/).map(function(line) {
+					console.log('console: ' + line);
+				});
+			}
 		});
 		self.casper._loggingConfigured = true;
 	}
@@ -87,31 +91,51 @@ OpenNMS.prototype.enableScreenshots = function() {
 	}
 };
 
+OpenNMS.prototype.start = function start() {
+	if (!self.casper._started) {
+		self.casper.start();
+		self.casper._started = true;
+	}
+};
+
 OpenNMS.prototype.login = function login() {
 	var self = this;
 
-	self.casper.log('Filling OpenNMS login form.');
+	console.log('* Filling OpenNMS login form.');
 	var options = self.options();
 
-	var formFill = function() {
+	self.start();
+
+	var url = self.root() + '/login.jsp';
+	//console.log('opening URL: ' + url);
+	self.casper.thenOpen(self.root() + '/login.jsp');
+	self.casper.then(function() {
 		this.fill('form', {
 			j_username: options.username,
 			j_password: options.password
 		}, true);
-	};
-
-	var url = self.root() + '/login.jsp';
-	//console.log('opening URL: ' + url);
-	if (self.casper._started) {
-		self.casper.thenOpen(url, formFill, true);
-	} else {
-		self.casper._started = true;
-		self.casper.start(url, formFill, true);
-	}
-	self.casper.then(function() {
-		self.casper.log('Finished logging in.');
 	});
-	self.casper.setHttpAuth(options.username, options.password);
+	self.enableBasicAuth();
+	self.casper.thenOpen(self.root());
+	self.casper.then(function() {
+		console.log('* Finished logging in.');
+	});
+}
+
+OpenNMS.prototype.enableBasicAuth = function(username, password) {
+	var self = this;
+	var options = self.options();
+
+	if (!username) {
+		username = options.username;
+	}
+	if (!password) {
+		password = options.password;
+	}
+
+	self.casper.then(function() {
+		this.setHttpAuth(username, password);
+	});
 }
 
 OpenNMS.prototype.logout = function() {
@@ -216,12 +240,32 @@ OpenNMS.prototype.deleteRequisition = function(foreignSource) {
 	self.casper.back();
 };
 
-OpenNMS.prototype.ensureNoRequisitions = function() {
+OpenNMS.prototype.wipeRequisition = function(foreignSource) {
 	var self = this;
 
-	var enrLog = function(text) {
-		self.casper.echo('OpenNMS.ensureNoRequisitions: ' + text, 'INFO');
+	var wipeLog = function(text) {
+		self.casper.echo('OpenNMS.wipeRequisition: ' + text, 'INFO');
 	}
+
+	self.casper.then(function() {
+		wipeLog('clearing ' + foreignSource);
+		self.createOrReplaceRequisition(foreignSource);
+	});
+	self.casper.wait(500);
+	self.casper.then(function() {
+		wipeLog('importing empty ' + foreignSource);
+		self.importRequisition(foreignSource);
+	});
+	self.casper.wait(500);
+	self.casper.then(function() {
+		wipeLog('deleting ' + foreignSource);
+		self.deleteRequisition(foreignSource);
+	});
+	self.casper.wait(500);
+};
+
+OpenNMS.prototype.ensureNoRequisitions = function() {
+	var self = this;
 
 	self.casper.thenOpen(self.root() + '/rest/requisitions', {
 		headers: {
@@ -239,26 +283,9 @@ OpenNMS.prototype.ensureNoRequisitions = function() {
 		if (requisition.count > 0) {
 			for (var i=0; i < requisition.count; i++) {
 				var foreignSource = requisition['model-import'][i]['foreign-source'];
-				self.casper.then(function() {
-					enrLog('clearing ' + foreignSource);
-					self.createOrReplaceRequisition(foreignSource);
-				});
-				self.casper.wait(100);
-				self.casper.then(function() {
-					enrLog('importing empty ' + foreignSource);
-					self.importRequisition(foreignSource);
-				});
-				self.casper.wait(100);
-				self.casper.then(function() {
-					enrLog('deleting ' + foreignSource);
-					self.deleteRequisition(foreignSource);
-				});
-				self.casper.wait(100);
+				self.wipeRequisition(foreignSource);
 			}
 		}
-		self.casper.then(function() {
-			self.casper.back();
-		});
 	});
 };
 

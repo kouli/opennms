@@ -54,6 +54,7 @@ casper.test.begin('Quick-Add Node', 7, {
 			test.assertEquals(requisition.node.length, 1, 'requisition should have one node');
 			test.assertEquals(requisition.node[0]['node-label'], testNodeLabel, 'node should have label "' + testNodeLabel + '"');
 		});
+		casper.back();
 
 		opennms.finished(test);
 	}

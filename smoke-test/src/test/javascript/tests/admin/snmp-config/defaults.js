@@ -38,7 +38,7 @@ casper.test.begin('Configure SNMP Community Names by IP Address > Defaults', 14,
 		});
 		casper.then(function() {
 			this.fill('form[name="snmpConfigForm"]', {
-				firstIPAddress: '1.2.3.4',
+				firstIPAddress: '1.1.1.2',
 				securityLevel: 'authPriv',
 				authProtocol: 'SHA',
 				authPassPhrase: 'authMe!',
@@ -51,9 +51,10 @@ casper.test.begin('Configure SNMP Community Names by IP Address > Defaults', 14,
 
 		// validate v3 lookup
 		casper.thenOpen(opennms.root() + '/admin/snmpConfig');
+		casper.wait(100);
 		casper.then(function() {
 			casper.fill('form[name="snmpConfigGetForm"]', {
-				ipAddress: '1.2.3.4'
+				ipAddress: '1.1.1.2'
 			}, false);
 		});
 		casper.then(function() {
@@ -69,7 +70,7 @@ casper.test.begin('Configure SNMP Community Names by IP Address > Defaults', 14,
 			test.assertVisible('#authProtocol', 'V3 "Auth Protocol" field should be visible.');
 			test.assertField('ipAddress', '', 'IP address lookup field should be empty.');
 			test.assertField('version', 'v3', 'Version should be set to V3.');
-			test.assertField('firstIPAddress', '1.2.3.4', 'First IP address field should be filled out.');
+			test.assertField('firstIPAddress', '1.1.1.2', 'First IP address field should be filled out.');
 			test.assertField('authPassPhrase', 'authMe!', 'Auth Passphrase should be filled out.');
 			test.assertField('privPassPhrase', 'privMe!', 'Privacy Passphrase should be filled out.');
 			test.assertField('securityLevel', '3', 'Security level should be "authPriv".'); // <option value="3" selected="">authPriv</option>

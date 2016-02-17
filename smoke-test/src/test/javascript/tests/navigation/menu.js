@@ -271,6 +271,7 @@ casper.test.begin('OpenNMS Nav Bar Menu', 63, {
 		for (var text in expected) {
 			if (expected.hasOwnProperty(text)) {
 				var entry = getEntry(text, expected);
+				casper.thenOpen(opennms.root());
 				var entrySelector = 'ul > li > a[name=\"' + entry.selector.replace(/\"/, '\\\"') + '\"]';
 				testSelectorExists(entrySelector, getMenuEntryName(text) + ' menu entry exists');
 				testClickable(entrySelector, entry.linkPageSelector, entry.linkPageText, getMenuEntryName(text));
@@ -279,6 +280,7 @@ casper.test.begin('OpenNMS Nav Bar Menu', 63, {
 					for (var child in children) {
 						if (children.hasOwnProperty(child)) {
 							var childEntry = getEntry(child, children, text);
+							casper.thenOpen(opennms.root());
 							var childSelector = 'ul > li > ul > li > a[name=\"' + childEntry.selector.replace(/\"/, '\\\"') + '\"]';
 							testSelectorExists(childSelector, getMenuEntryName([text, child]) + ' menu entry exists');
 							testClickable([entrySelector, childSelector], childEntry.linkPageSelector, childEntry.linkPageText, getMenuEntryName([text, child]));

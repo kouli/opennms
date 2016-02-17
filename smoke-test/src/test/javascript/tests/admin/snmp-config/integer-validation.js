@@ -18,7 +18,7 @@ var checkInput = function(fieldName, input) {
 	// first put in an IP address or it won't do other form validation
 	casper.then(function() {
 		var formInput = {
-			firstIPAddress: '1.2.3.4'
+			firstIPAddress: '2.1.1.1'
 		};
 		formInput[fieldName] = input;
 		casper.fill('form[name="snmpConfigForm"]', formInput, false);
@@ -50,7 +50,7 @@ var checkIntegerField = function(fieldName) {
 
 	casper.then(function() {
 		var formInput = {
-			firstIPAddress: '1.2.3.4'
+			firstIPAddress: '2.1.1.2'
 		};
 		formInput[fieldName] = '1000';
 		casper.fill('form[name="snmpConfigForm"]', formInput, false);
@@ -116,14 +116,14 @@ casper.test.begin('Configure SNMP Community Names by IP Address > Integer Valida
 		casper.wait(500);
 
 		testInvalidIp('1234', '', '1234 is not a valid IP address!');
-		testInvalidIp('1.1.1.1', 'abc', 'abc is not a valid IP address!');
+		testInvalidIp('2.1.1.3', 'abc', 'abc is not a valid IP address!');
 
-		enterIp('1.1.1.1', '');
+		enterIp('2.1.1.4', '');
 		casper.then(function() {
 			casper.test.assertSelectorHasText('div#content > h3', 'Finished configuring SNMP. OpenNMS does not need to be restarted.');
 		});
 
-		enterIp('1.1.1.1', '1.1.1.2');
+		enterIp('2.1.1.5', '2.1.1.6');
 		casper.then(function() {
 			casper.test.assertSelectorHasText('div#content > h3', 'Finished configuring SNMP. OpenNMS does not need to be restarted.');
 		});
