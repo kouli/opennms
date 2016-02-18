@@ -18,7 +18,9 @@ casper.test.begin('Quick-Add Node', 7, {
 		opennms.createOrReplaceRequisition(foreignSource);
 		opennms.assertRequisitionExists(foreignSource);
 		opennms.importRequisition(foreignSource);
-
+		casper.then(function() {
+			casper.wait(10000);
+		});
 		casper.thenOpen(opennms.root() + '/admin/node/add.htm', function() {
 			test.assertSelectorHasText('h3.panel-title', 'Basic Attributes (required)');
 		});

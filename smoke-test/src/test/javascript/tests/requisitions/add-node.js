@@ -44,7 +44,7 @@ casper.test.begin('Add Node to Requisition', 9, {
 		});
 		casper.then(function() {
 			casper.fillSelectors('form[name="detectorForm"]', {
-				'input[ng-model="detector.name"]': 'HTTP-8980',
+				'input[ng-model="detector.name"]': 'HTTP-8980'
 			}, false);
 			casper.sendKeys('input#clazz', 'HTTP\n', {reset:true});
 		});

@@ -20,6 +20,9 @@ casper.test.begin('Node List Page', 4, {
 			]
 		});
 		opennms.importRequisition('node-list-test');
+		casper.then(function() {
+			this.wait(5000);
+		});
 		casper.thenOpen(opennms.root() + '/element/nodeList.htm');
 	},
 

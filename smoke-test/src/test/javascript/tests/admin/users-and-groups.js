@@ -43,16 +43,16 @@ casper.test.begin('User Admin Page', 12, {
 			test.assertExists('a[id="users(' + testUser + ').doModify"]');
 		});
 
-		casper.then(function() {
+		casper.waitForSelector('li a[href="admin/userGroupView/index.jsp"]', function() {
 			casper.clickLabel('Users and Groups');
 		});
-		casper.then(function() {
+		casper.waitForSelector('div.panel-body p a[href="admin/userGroupView/groups/list.htm"]', function() {
 			casper.clickLabel('Configure Groups');
 		});
-		casper.then(function() {
+		casper.waitForSelector('a[href="javascript:addNewGroup()"]', function() {
 			casper.click('a[href="javascript:addNewGroup()"]');
 		});
-		casper.then(function() {
+		casper.waitForSelector('form#newGroupForm', function() {
 			casper.fill('form#newGroupForm', {
 				groupName: testGroup,
 				groupComment: 'Test'

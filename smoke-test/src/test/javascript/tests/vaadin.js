@@ -4,11 +4,11 @@ var opennms = require('../../util/opennms')(casper),
 	utils = require('utils');
 
 var urls = [
-	"jmx-config-tool",
-	"vaadin-surveillance-views?dashboard=true",
-	"vaadin-surveillance-views?dashboard=false",
-	"vaadin-surveillance-views-config",
-	"wallboard-config"
+	'jmx-config-tool',
+	'vaadin-surveillance-views?dashboard=true',
+	'vaadin-surveillance-views?dashboard=false',
+	'vaadin-surveillance-views-config',
+	'wallboard-config'
 ];
 
 casper.test.begin('Vaadin Applications', 20, {

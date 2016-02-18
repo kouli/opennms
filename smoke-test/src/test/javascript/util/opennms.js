@@ -225,7 +225,6 @@ OpenNMS.prototype.importRequisition = function(foreignSource) {
 		}
 	});
 	self.casper.back();
-	self.casper.wait(5000);
 };
 
 OpenNMS.prototype.deleteRequisition = function(foreignSource) {
@@ -266,7 +265,7 @@ OpenNMS.prototype.wipeRequisition = function(foreignSource) {
 		wipeLog('importing empty ' + foreignSource);
 		self.importRequisition(foreignSource);
 	});
-	self.casper.wait(500);
+	self.casper.wait(6000);
 	self.casper.then(function() {
 		wipeLog('deleting ' + foreignSource);
 		self.deleteRequisition(foreignSource);
