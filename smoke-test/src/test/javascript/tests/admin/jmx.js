@@ -115,10 +115,6 @@ casper.test.begin('JMX Configuration Generator', 10, {
 			test.assertEquals(info.match(/\<comp-member/g).length, 7, 'There should be 7 <comp-member/> tags in jmx-datacollection-config.xml');
 		});
 
-		casper.then(function() {
-			casper.capture('target/screenshots/wip.png');
-		});
-
 		opennms.finished(test);
 	}
 });
