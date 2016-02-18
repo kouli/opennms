@@ -37,7 +37,7 @@ OpenNMS.prototype.configureLogging = function() {
 			if (message) {
 				message.trim().split(/[\r\n]+/).map(function(line) {
 					if (line.indexOf('com.vaadin.client.VConsole') < 0) {
-						console.log('console: ' + line);
+						//console.log('console: ' + line);
 					}
 				});
 			}
@@ -232,6 +232,14 @@ OpenNMS.prototype.deleteRequisition = function(foreignSource) {
 	var self = this;
 
 	self.casper.thenOpen(self.root() + '/rest/requisitions/' + foreignSource, {
+		method: 'delete'
+	}, function(response) {
+		if (response.status !== 200) {
+			console.log('Unexpected response: ' + JSON.stringify(response));
+			throw new CasperError('DELETE of requisition ' + foreignSource + ' should return success.');
+		}
+	});
+	self.casper.thenOpen(self.root() + '/rest/requisitions/deployed/' + foreignSource, {
 		method: 'delete'
 	}, function(response) {
 		if (response.status !== 200) {
