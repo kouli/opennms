@@ -35,14 +35,13 @@ casper.test.begin('Quick-Add Node', 7, {
 			this.click('input[type="submit"][value="Provision"]');
 		})
 
+		casper.wait(2000);
 		casper.then(function() {
 			this.clickLabel('Provisioning Requisitions');
 		});
 		casper.waitForSelector('button[tooltip="Edit the '+foreignSource+' Requisition"]', function() {
 			test.assertSelectorHasText('td[class="ng-binding"]', foreignSource);
 		});
-
-		casper.wait(1000);
 
 		casper.then(function() {
 			opennms.fetchRequisition(foreignSource);
