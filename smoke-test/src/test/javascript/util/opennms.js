@@ -70,14 +70,23 @@ var cleanText = function(text) {
 
 OpenNMS.prototype.enableScreenshots = function() {
 	var self = this;
+
+	if (!self.casper.hasOwnProperty('_screenshotNumber')) {
+		self.casper._screenshotNumber = 1;
+	}
+
+	var takeScreenshot = function(filename) {
+		self.casper.capture('target/screenshots/' + self.casper._screenshotNumber++ + '-' + filename);
+	};
+
 	self.casper.options.onWaitTimeout = function() {
-		this.capture('target/screenshots/timeout-wait.png');
+		takeScreenshot('timeout-wait.png');
 	};
 	self.casper.options.onTimeout = function() {
-		this.capture('target/screenshots/timeout.png');
+		takeScreenshot('timeout.png');
 	};
 	self.casper.options.onStepTimeout = function() {
-		this.capture('target/screenshots/timeout-step.png');
+		takeScreenshot('timeout-step.png');
 	};
 	if (!self.casper._screenshotsEnabled) {
 		self.casper.test.on('fail', function(failure) {
@@ -96,7 +105,7 @@ OpenNMS.prototype.enableScreenshots = function() {
 				if (file) {
 					outfile = file + '-' + outfile;
 				}
-				self.casper.capture('target/screenshots/' + outfile);
+				takeScreenshot(outfile);
 			}
 		});
 		self.casper._screenshotsEnabled = true;
@@ -354,6 +363,7 @@ OpenNMS.prototype.waitForRequisition = function(foreignSource, numNodes) {
 	self.casper.then(function() {
 		console.log('* ' + foreignSource + ' has been deployed.');
 	});
+	self.casper.wait(500);
 	self.casper.thenOpen(startingUrl);
 };
 
