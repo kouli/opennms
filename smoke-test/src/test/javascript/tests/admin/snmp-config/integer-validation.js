@@ -59,7 +59,7 @@ var checkIntegerField = function(fieldName) {
 		casper.clickLabel('Save Config');
 	});
 	casper.then(function() {
-		casper.test.assertSelectorHasText('div#content > h3', 'Finished configuring SNMP. OpenNMS does not need to be restarted.');
+		casper.test.assertSelectorHasText('div#content > h3', 'Finished configuring SNMP. OpenNMS does not need to be restarted.', 'A "finished configuring SNMP" message should be visible after submitting a config');
 	});
 };
 
@@ -120,12 +120,12 @@ casper.test.begin('Configure SNMP Community Names by IP Address > Integer Valida
 
 		enterIp('2.1.1.4', '');
 		casper.then(function() {
-			casper.test.assertSelectorHasText('div#content > h3', 'Finished configuring SNMP. OpenNMS does not need to be restarted.');
+			casper.test.assertSelectorHasText('div#content > h3', 'Finished configuring SNMP. OpenNMS does not need to be restarted.', 'A "finished configuring SNMP" message should be visible after submitting a config');
 		});
 
 		enterIp('2.1.1.5', '2.1.1.6');
 		casper.then(function() {
-			casper.test.assertSelectorHasText('div#content > h3', 'Finished configuring SNMP. OpenNMS does not need to be restarted.');
+			casper.test.assertSelectorHasText('div#content > h3', 'Finished configuring SNMP. OpenNMS does not need to be restarted.', 'A "finished configuring SNMP" message should be visible after submitting a config');
 		});
 
 		opennms.finished(test);

@@ -18,16 +18,16 @@ casper.test.begin('Database Batch Reports', 8, {
 			casper.clickLabel('List reports');
 		});
 		casper.then(function() {
-			test.assertElementCount('h3.panel-title', 1);
-			test.assertSelectorHasText('h3.panel-title', 'Local Report Repository');
+			test.assertElementCount('h3.panel-title', 1, 'Batch reports page should have 1 panel section');
+			test.assertSelectorHasText('h3.panel-title', 'Local Report Repository', 'The panel header in the batch reports page should be "Local Report Repository"');
 		});
 
 		casper.then(function() {
 			casper.click('td[class="o-report-deliver"] a');
 		});
 		casper.then(function() {
-			test.assertElementCount('h3.panel-title', 1);
-			test.assertSelectorHasText('h3.panel-title', 'Report Parameters');
+			test.assertElementCount('h3.panel-title', 1, 'After clicking to deliver a report, there should be 1 panel section');
+			test.assertSelectorHasText('h3.panel-title', 'Report Parameters', 'After clicking to deliver a report, the panel  header should say "Report Parameters"');
 			var matching = casper.getElementsInfo('h3').filter(function(element) {
 				return element.text.indexOf('Error') >= 0;
 			});
@@ -41,8 +41,8 @@ casper.test.begin('Database Batch Reports', 8, {
 			casper.click('td[class="o-report-schedule"] a');
 		});
 		casper.then(function() {
-			test.assertElementCount('h3.panel-title', 1);
-			test.assertSelectorHasText('h3.panel-title', 'Report Parameters');
+			test.assertElementCount('h3.panel-title', 1, 'After clicking to schedule a report, there should be 1 panel section');
+			test.assertSelectorHasText('h3.panel-title', 'Report Parameters', 'After clicking to schedule a report, the panel header should say "Report Parameters"');
 			var matching = casper.getElementsInfo('h3').filter(function(element) {
 				return element.text.indexOf('Error') >= 0;
 			});

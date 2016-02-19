@@ -56,8 +56,8 @@ casper.test.begin('Database Batch Reports', 13, {
 			casper.then(function() {
 				casper.click('input#run');
 			});
-			casper.then(function() {
-				test.assertTextExists(resultPageContents, reportFormat + ' report ' + reportName + ' contains text ' + resultPageContents);
+			casper.waitForText(resultPageContents, function() {
+				test.assertTextExists(resultPageContents, reportFormat + ' report ' + reportName + ' should contain the text "' + resultPageContents + '"');
 			});
 		};
 

@@ -55,21 +55,21 @@ casper.test.begin('Admin Page Links', 36, function suite(test) {
 	var adminLink = opennms.root() + '/admin/index.jsp';
 
 	casper.thenOpen(adminLink, function() {
-		test.assertElementCount('h3.panel-title', 8);
-		test.assertSelectorHasText('h3.panel-title', 'OpenNMS System');
-		test.assertSelectorHasText('h3.panel-title', 'Provisioning');
-		test.assertSelectorHasText('h3.panel-title', 'Event Management');
-		test.assertSelectorHasText('h3.panel-title', 'Service Monitoring');
-		test.assertSelectorHasText('h3.panel-title', 'Performance Measurement');
-		test.assertSelectorHasText('h3.panel-title', 'Distributed Monitoring');
-		test.assertSelectorHasText('h3.panel-title', 'Additional Tools');
-		test.assertSelectorHasText('h3.panel-title', 'Descriptions');
+		test.assertElementCount('h3.panel-title', 8, 'The Admin page should have 8 panel sections');
+		test.assertSelectorHasText('h3.panel-title', 'OpenNMS System', 'The Admin page should have an "OpenNMS System" section');
+		test.assertSelectorHasText('h3.panel-title', 'Provisioning', 'The Admin page should have a "Provisioning" section');
+		test.assertSelectorHasText('h3.panel-title', 'Event Management', 'The Admin page should have an "Event Management" section');
+		test.assertSelectorHasText('h3.panel-title', 'Service Monitoring', 'The Admin page should have a "Service Monitoring" section');
+		test.assertSelectorHasText('h3.panel-title', 'Performance Measurement', 'The Admin page should have a "Performance Measurement" section');
+		test.assertSelectorHasText('h3.panel-title', 'Distributed Monitoring', 'The Admin page should have a "Distributed Monitoring" section');
+		test.assertSelectorHasText('h3.panel-title', 'Additional Tools', 'The Admin page should have an "Additional Tools" section');
+		test.assertSelectorHasText('h3.panel-title', 'Descriptions', 'The Admin page should have a "Descriptions" section');
 	});
 
 	var linkNames = Object.keys(links);
 
 	casper.then(function() {
-		test.assertElementCount('div.panel li', linkNames.length, 'Admin page should have ' + linkNames.length + ' links.');
+		test.assertElementCount('div.panel li', linkNames.length, 'The Admin page should have ' + linkNames.length + ' links.');
 	});
 
 	var processLink = function(linkName, subject) {

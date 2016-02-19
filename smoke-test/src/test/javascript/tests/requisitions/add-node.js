@@ -115,9 +115,9 @@ casper.test.begin('Add Node to Requisition', 9, {
 			casper.click('#go-back');
 		});
 		casper.waitForText(nodeLabel, function() {
-			test.assertSelectorHasText('td', nodeLabel);
-			test.assertSelectorHasText('td', foreignId);
-			test.assertSelectorHasText('td', ipAddress + ' (P)');
+			test.assertSelectorHasText('td', nodeLabel, 'There should be a node row entry for the test node label');
+			test.assertSelectorHasText('td', foreignId, 'There should be a node row entry for the test foreign ID');
+			test.assertSelectorHasText('td', ipAddress + ' (P)', 'There should be a node row entry for the IP address');
 		});
 
 		// Synchronize the requisition
@@ -129,7 +129,7 @@ casper.test.begin('Add Node to Requisition', 9, {
 		casper.thenClick('.modal-dialog button.btn.btn-success');
 		casper.waitWhileSelector('.modal_dialog');
 		casper.waitForText('(1 nodes)', function() {
-			test.assertTextExists('(1 nodes)');
+			test.assertTextExists('(1 nodes)', 'There should be one node on the requisition node page');
 		});
 		casper.waitWhileSelector('.danger', function() {
 			test.assertDoesntExist('.danger', 'There should be no unfinished/red entries on the screen');

@@ -21,6 +21,16 @@ function OpenNMS(casper, options) {
 	this.casper = casper;
 	this._options = options || {};
 	extend(this._options, defaultOptions);
+	this.casper.options.retryTimeout = 50;
+	this.casper.options.waitTimeout = 10000;
+	this.casper.options.onResourceRequested = function(c, requestData, networkRequest) {
+		if (requestData.url.indexOf('/rest/') >= 0) {
+			if (!requestData.headers.Accept) {
+				//console.log('* Setting Accept header to application/json on request ' + requestData.url);
+				networkRequest.setHeader('Accept', 'application/json');
+			}
+		}
+	};
 }
 
 OpenNMS.prototype.initialize = function() {
@@ -80,7 +90,7 @@ OpenNMS.prototype.enableScreenshots = function() {
 				file = cleanText(failure.file.replace('src/test/javascript/tests/', '').replace(/.js$/, ''));
 			}
 			if (!message && !file) {
-				console.log('Unsure how to handle failure: ' + JSON.stringify(failure));
+				console.log('OpenNMS.enableScreenshots: unsure how to handle failure: ' + JSON.stringify(failure));
 			} else {
 				var outfile = message + '.png';
 				if (file) {
@@ -115,11 +125,14 @@ OpenNMS.prototype.login = function login() {
 		this.fill('form', {
 			j_username: options.username,
 			j_password: options.password
-		}, true);
+		}, false);
+	});
+	self.casper.then(function() {
+		self.casper.clickLabel('Login');
 	});
 	self.enableBasicAuth();
 	self.casper.thenOpen(self.root());
-	self.casper.then(function() {
+	self.casper.waitForSelector('ol.breadcrumb > li > a[href="'+self.root()+'/index.jsp"]', function() {
 		console.log('* Finished logging in.');
 	});
 }
@@ -176,7 +189,7 @@ OpenNMS.prototype.createOrReplaceRequisition = function(foreignSource, obj) {
 		}
 	}, function(response) {
 		if (response.status !== 200) {
-			console.log('Unexpected response: ' + JSON.stringify(response));
+			console.log('OpenNMS.createOrReplaceRequisition: unexpected response: ' + JSON.stringify(response));
 			throw new CasperError('POST of requisition ' + foreignSource + ' should return success.');
 		}
 	});
@@ -193,7 +206,7 @@ OpenNMS.prototype.fetchRequisition = function(foreignSource) {
 	});
 };
 
-OpenNMS.prototype.assertRequisitionExists = function(foreignSource) {
+OpenNMS.prototype.assertRequisitionImported = function(foreignSource) {
 	var self = this;
 
 	self.casper.thenOpen(self.root() + '/rest/requisitions/' + foreignSource, {
@@ -202,11 +215,45 @@ OpenNMS.prototype.assertRequisitionExists = function(foreignSource) {
 		}
 	}, function(response) {
 		if (response.status !== 200) {
-			console.log('Unexpected response: ' + JSON.stringify(response));
+			console.log('OpenNMS.assertRequisitionImported: unexpected response: ' + JSON.stringify(response));
 			throw new CasperError('GET of requisition ' + foreignSource + ' should return success.');
 		}
 	});
+	self.casper.then(function() {
+		var requisition = JSON.parse(this.getPageContent());
+		if (requisition['date-stamp'] > requisition['last-import']) {
+			throw new CasperError('Requisition ' + foreignSource + ' has not yet been imported since it was last modified!');
+		}
+	});
 	self.casper.back();
+};
+
+OpenNMS.prototype.assertRequisitionExists = function(foreignSource, numNodes) {
+	var self = this;
+
+	var startingUrl = self.casper.getCurrentUrl();
+	self.casper.thenOpen(self.root() + '/rest/requisitions/' + foreignSource);
+
+	var to = setTimeout(function() {
+		self.casper.thenOpen(self.root() + '/rest/requisitions/' + foreignSource);
+	}, 500);
+
+	var expected = '"foreign-source": "' + foreignSource + '"';
+	self.casper.waitForText(expected, function() {
+		var contents = this.getPageContent();
+		if (contents.indexOf(expected) >= 0) {
+			var requisition = JSON.parse(contents);
+			if (numNodes !== undefined && numNodes !== requisition.count) {
+				throw new CasperError('Requisition ' + foreignSource + ' exists, but only has ' + requisition.count + ' nodes! (' + numNodes + ' expected)');
+			}
+		} else {
+			throw new CasperError('Requisition ' + foreignSource + ' never returned a valid JSON response.');
+		}
+	});
+	self.casper.then(function() {
+		clearTimeout(to);
+	});
+	self.casper.thenOpen(startingUrl);
 };
 
 OpenNMS.prototype.importRequisition = function(foreignSource) {
@@ -220,7 +267,7 @@ OpenNMS.prototype.importRequisition = function(foreignSource) {
 		}
 	}, function(response) {
 		if (response.status !== 415) {
-			console.log('Unexpected response: ' + JSON.stringify(response));
+			console.log('OpeNNMS.importRequisition: unexpected response: ' + JSON.stringify(response));
 			throw new CasperError('(sigh) import of requisition ' + foreignSource + ' redirects to a page that eventually gives a 415 error.');
 		}
 	});
@@ -234,7 +281,7 @@ OpenNMS.prototype.deleteRequisition = function(foreignSource) {
 		method: 'delete'
 	}, function(response) {
 		if (response.status !== 200) {
-			console.log('Unexpected response: ' + JSON.stringify(response));
+			console.log('OpenNMS.deleteRequisition: unexpected response: ' + JSON.stringify(response));
 			throw new CasperError('DELETE of requisition ' + foreignSource + ' should return success.');
 		}
 	});
@@ -242,11 +289,72 @@ OpenNMS.prototype.deleteRequisition = function(foreignSource) {
 		method: 'delete'
 	}, function(response) {
 		if (response.status !== 200) {
-			console.log('Unexpected response: ' + JSON.stringify(response));
+			console.log('OpenNMS.deleteRequisition: unexpected response: ' + JSON.stringify(response));
 			throw new CasperError('DELETE of requisition ' + foreignSource + ' should return success.');
 		}
 	});
 	self.casper.back();
+};
+
+OpenNMS.prototype.waitForRequisition = function(foreignSource, numNodes) {
+	var self = this;
+	var startingUrl = self.casper.getCurrentUrl();
+	self.assertRequisitionExists(foreignSource, numNodes);
+
+	var expected = '"foreign-source": "' + foreignSource + '"';
+	self.casper.thenOpen(self.root() + '/rest/requisitions/' + foreignSource);
+	var to = setTimeout(function() {
+		self.casper.thenOpen(self.root() + '/rest/requisitions/' + foreignSource);
+	}, 500);
+	console.log('* Waiting for ' + foreignSource + ' requisition to exist and be deployed.');
+	self.casper.waitFor(function check() {
+		var ret = false;
+		var content = self.casper.getPageContent();
+		if (content.indexOf(expected) >= 0) {
+			var requisition = JSON.parse(content);
+			if (numNodes && numNodes !== requisition.node.length) {
+				//console.log('! Requisition ' + foreignSource + ' exists, but has the wrong number of nodes! (' + requisition.node.length + ' != ' + numNodes + ')');
+				ret = false;
+			} else {
+				if (requisition['date-stamp'] > requisition['last-import']) {
+					//console.log('! Requisition ' + foreignSource + ' exists, but has not finished importing.');
+					ret = true;
+				} else {
+					//console.log('* Requisition ' + foreignSource + ' has finished importing.');
+					ret = true;
+				}
+			}
+		}
+		return ret;
+	}, function then() {
+		clearTimeout(to);
+
+		self.casper.thenOpen(self.root() + '/rest/nodes/?foreignSource=' + foreignSource);
+		to = setTimeout(function() {
+			self.casper.thenOpen(self.root() + '/rest/nodes/?foreignSource=' + foreignSource);
+		}, 500);
+		self.casper.waitFor(function checkNodes() {
+			var ret = false;
+			var content = self.casper.getPageContent();
+			if (content.indexOf('"foreignSource": "' + foreignSource + '"') >= 0) {
+				var node = JSON.parse(content);
+				if (numNodes !== undefined && node.count !== numNodes) {
+					//console.log('! Requisition ' + foreignSource + ' does not have the required number of nodes in the database. (' + node.count + ' != ' + numNodes + ')');
+					ret = false;
+				} else {
+					//console.log('* Requisition ' + foreignSource + ' has finished importing.');
+					ret = true;
+				}
+			} else {
+				ret = false;
+			}
+		});
+		self.casper.thenOpen(startingUrl);
+	});
+	self.casper.then(function() {
+		console.log('* ' + foreignSource + ' has been deployed.');
+	});
+	self.casper.thenOpen(startingUrl);
 };
 
 OpenNMS.prototype.wipeRequisition = function(foreignSource) {
@@ -265,7 +373,7 @@ OpenNMS.prototype.wipeRequisition = function(foreignSource) {
 		wipeLog('importing empty ' + foreignSource);
 		self.importRequisition(foreignSource);
 	});
-	self.casper.wait(6000);
+	self.waitForRequisition(foreignSource);
 	self.casper.then(function() {
 		wipeLog('deleting ' + foreignSource);
 		self.deleteRequisition(foreignSource);
@@ -285,7 +393,7 @@ OpenNMS.prototype.ensureNoRequisitions = function() {
 	self.casper.then(function() {
 		var content = this.getPageContent();
 		if (content.indexOf('"model-import"') < 0) {
-			console.log('Unexpected content: ' + content);
+			console.log('OpenNMS.ensureNoRequisitions: Unexpected content: ' + content);
 			throw new CasperError('"model-import" JSON field should be found');
 		}
 		var requisition = JSON.parse(this.getPageContent());
@@ -327,7 +435,7 @@ OpenNMS.prototype.createEvent = function(ev) {
 		data: ev
 	}, function(response) {
 		if (response.status !== 200) {
-			console.log('Unexpected response: ' + JSON.stringify(response));
+			console.log('* OpenNMS.createEvent: unexpected response: ' + JSON.stringify(response));
 			throw new CasperError('Creation of event ' + ev.uei + ' failed.');
 		}
 	});

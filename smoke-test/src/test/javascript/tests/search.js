@@ -12,10 +12,10 @@ casper.test.begin('Search Page', 20, {
 
 	test: function(test) {
 		casper.then(function() {
-			test.assertElementCount('h3.panel-title', 3);
-			test.assertSelectorHasText('h3.panel-title', 'Search for Nodes');
-			test.assertSelectorHasText('h3.panel-title', 'Search Asset Information');
-			test.assertSelectorHasText('h3.panel-title', 'Search Options');
+			test.assertElementCount('h3.panel-title', 3, 'The Search page should have 3 panel sections');
+			test.assertSelectorHasText('h3.panel-title', 'Search for Nodes', 'The Search page should have a "Search for Nodes" panel header');
+			test.assertSelectorHasText('h3.panel-title', 'Search Asset Information', 'The Search page should have a "Search Asset Information" panel header');
+			test.assertSelectorHasText('h3.panel-title', 'Search Options', 'The Search page should have a "Search Options" panel header');
 		});
 
 		casper.then(function() {
@@ -34,8 +34,8 @@ casper.test.begin('Search Page', 20, {
 			casper.clickLabel('All nodes');
 		});
 		casper.then(function() {
-			test.assertElementCount('h3.panel-title', 1);
-			test.assertSelectorHasText('h3.panel-title', 'Nodes');
+			test.assertElementCount('h3.panel-title', 1, 'The "All nodes" page should have 1 panel section');
+			test.assertSelectorHasText('h3.panel-title', 'Nodes', 'The "All nodes" page should have a "Nodes" panel header');
 			casper.back();
 		});
 
@@ -43,8 +43,8 @@ casper.test.begin('Search Page', 20, {
 			casper.clickLabel('All nodes and their interfaces');
 		});
 		casper.then(function() {
-			test.assertElementCount('h3.panel-title', 1);
-			test.assertSelectorHasText('h3.panel-title', 'Nodes and their interfaces');
+			test.assertElementCount('h3.panel-title', 1, 'The "All nodes and their interfaces" page should have 1 panel section');
+			test.assertSelectorHasText('h3.panel-title', 'Nodes and their interfaces', 'The "All nodes and their interfaces" page should have a "Nodes and their interfaces" panel header');
 			casper.back();
 		});
 
@@ -52,8 +52,8 @@ casper.test.begin('Search Page', 20, {
 			casper.clickLabel('All nodes with asset info');
 		});
 		casper.then(function() {
-			test.assertElementCount('h3.panel-title', 1);
-			test.assertSelectorHasText('h3.panel-title', 'Assets');
+			test.assertElementCount('h3.panel-title', 1, 'The "All nodes with asset info" page should have 1 panel section');
+			test.assertSelectorHasText('h3.panel-title', 'Assets', 'The "All nodes with asset info" page should have an "Assets" panel header');
 			casper.back();
 		});
 

@@ -12,14 +12,14 @@ casper.test.begin('Support Page', 17, {
 
 	test: function(test) {
 		casper.then(function() {
-			test.assertElementCount('h3.panel-title', 3);
-			test.assertSelectorHasText('h3.panel-title', 'Commercial Support');
-			test.assertSelectorHasText('h3.panel-title', 'About');
-			test.assertSelectorHasText('h3.panel-title', 'Other Support Options');
+			test.assertElementCount('h3.panel-title', 3, 'The Support page should have 3 panel headers');
+			test.assertSelectorHasText('h3.panel-title', 'Commercial Support', 'The Support page should have a "Commercial Support" section');
+			test.assertSelectorHasText('h3.panel-title', 'About', 'The Support page should have an "About" section');
+			test.assertSelectorHasText('h3.panel-title', 'Other Support Options', 'The Support page should have an "Other Support Options" section');
 		});
 
 		casper.then(function() {
-			test.assertElementCount('div.panel-body a', 7);
+			test.assertElementCount('div.panel-body a', 7, 'The Support page should have 7 links');
 			test.assertExists('div.panel-body a', 'the OpenNMS.com support page');
 			test.assertExists('div.panel-body a', 'About the OpenNMS Web Console');
 			test.assertExists('div.panel-body a', 'Release Notes');

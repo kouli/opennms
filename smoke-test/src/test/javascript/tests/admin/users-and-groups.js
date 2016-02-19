@@ -36,11 +36,11 @@ casper.test.begin('User Admin Page', 12, {
 			casper.clickLabel('OK');
 		});
 		casper.then(function() {
-			test.assertSelectorHasText('h3.panel-title', 'Modify User: ' + testUser);
+			test.assertSelectorHasText('h3.panel-title', 'Modify User: ' + testUser, 'there should be a "Modify User" panel');
 			casper.clickLabel('Finish');
 		});
 		casper.then(function() {
-			test.assertExists('a[id="users(' + testUser + ').doModify"]');
+			test.assertExists('a[id="users(' + testUser + ').doModify"]', 'the "doModify" action should exist for user ' + testUser);
 		});
 
 		casper.waitForSelector('li a[href="admin/userGroupView/index.jsp"]', function() {

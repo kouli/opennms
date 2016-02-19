@@ -18,11 +18,9 @@ casper.test.begin('Quick-Add Node', 7, {
 		opennms.createOrReplaceRequisition(foreignSource);
 		opennms.assertRequisitionExists(foreignSource);
 		opennms.importRequisition(foreignSource);
-		casper.then(function() {
-			casper.wait(10000);
-		});
+		opennms.waitForRequisition(foreignSource, 1);
 		casper.thenOpen(opennms.root() + '/admin/node/add.htm', function() {
-			test.assertSelectorHasText('h3.panel-title', 'Basic Attributes (required)');
+			test.assertSelectorHasText('h3.panel-title', 'Basic Attributes (required)', 'The quick-add page should have a "Basic Attributes" header.');
 		});
 		casper.then(function() {
 			this.fill('form', {
@@ -40,7 +38,7 @@ casper.test.begin('Quick-Add Node', 7, {
 			this.clickLabel('Provisioning Requisitions');
 		});
 		casper.waitForSelector('button[tooltip="Edit the '+foreignSource+' Requisition"]', function() {
-			test.assertSelectorHasText('td[class="ng-binding"]', foreignSource);
+			test.assertSelectorHasText('td[class="ng-binding"]', foreignSource, 'There should be a row for the test foreign source');
 		});
 
 		casper.then(function() {

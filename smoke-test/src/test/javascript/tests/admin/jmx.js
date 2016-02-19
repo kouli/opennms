@@ -104,8 +104,8 @@ casper.test.begin('JMX Configuration Generator', 13, {
 		});
 		casper.waitForText('collectd-configuration.xml');
 		casper.then(function() {
-			test.assertTextExists('collectd-configuration.xml');
-			test.assertTextExists('jmx-datacollection-config.xml');
+			test.assertTextExists('collectd-configuration.xml', 'collectd-configuration.xml tab should exist');
+			test.assertTextExists('jmx-datacollection-config.xml', 'jmx-datacollection-config.xml tab should exist');
 			casper.clickLabel('jmx-datacollection-config.xml');
 		});
 		casper.waitForText('JMXMP protocol');

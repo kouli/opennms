@@ -12,8 +12,8 @@ casper.test.begin('Outage Page', 8, {
 
 	test: function(test) {
 		casper.then(function() {
-			test.assertSelectorHasText('h3.panel-title', 'Outage Menu');
-			test.assertSelectorHasText('h3.panel-title', 'Outages and Service Level Availability');
+			test.assertSelectorHasText('h3.panel-title', 'Outage Menu', 'The Outage page should have an "Outage Menu" panel header');
+			test.assertSelectorHasText('h3.panel-title', 'Outages and Service Level Availability', 'The Outage page should have an "Outages and Service Level Availability" panel header');
 			test.assertExists('form[name="outageIdForm"] input#input_id', 'Outage ID form should exist');
 		});
 

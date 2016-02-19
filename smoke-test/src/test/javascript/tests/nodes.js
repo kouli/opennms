@@ -20,23 +20,21 @@ casper.test.begin('Node List Page', 4, {
 			]
 		});
 		opennms.importRequisition('node-list-test');
-		casper.then(function() {
-			this.wait(5000);
-		});
+		opennms.waitForRequisition('node-list-test', 2);
 		casper.thenOpen(opennms.root() + '/element/nodeList.htm');
 	},
 
 	test: function(test) {
 		casper.then(function() {
-			test.assertSelectorHasText('h3.panel-title', 'Nodes');
+			test.assertSelectorHasText('h3.panel-title', 'Nodes', 'The Node List page should have a "Nodes" panel header');
 			test.assertExists('i.fa-database', 'database node info toggle should exist');
-			test.assertSelectorHasText('div#content > p > a', 'Show interfaces');
+			test.assertSelectorHasText('div#content > p > a', 'Show interfaces', 'The Node List page should have a "Show Interfaces" link');
 		});
 		casper.then(function() {
 			casper.clickLabel('Show interfaces');
 		});
 		casper.then(function() {
-			test.assertSelectorHasText('div#content > p > a', 'Hide interfaces');
+			test.assertSelectorHasText('div#content > p > a', 'Hide interfaces', 'The "Show interfaces" link should turn to "Hide interfaces" when clicked');
 		});
 
 		opennms.finished(test);
