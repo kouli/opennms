@@ -35,13 +35,16 @@ casper.test.begin('Add Node to Requisition', 9, {
 		});
 
 		// Edit the foreign source
-		casper.waitForSelector('button[tooltip="Edit detectors and policies of the '+foreignSource+' Requisition"]', function() {
-			casper.click('button[tooltip="Edit detectors and policies of the '+foreignSource+' Requisition"]');
+		casper.waitForSelector('button[uib-tooltip="Edit detectors and policies of the '+foreignSource+' Requisition"]');
+		casper.then(function() {
+			casper.click('button[uib-tooltip="Edit detectors and policies of the '+foreignSource+' Requisition"]');
 		});
+		casper.waitForSelector('input[placeholder="Search/Filter Detectors"]');
 		casper.then(function() {
 			test.assertSelectorHasText('h4', 'Foreign Source Definition for Requisition add-node-to-requisition-test', 'Foreign source edit header should be found.');
 			casper.click('button#add-detector');
 		});
+		casper.waitForSelector('form[name="detectorForm"]');
 		casper.then(function() {
 			casper.fillSelectors('form[name="detectorForm"]', {
 				'input[ng-model="detector.name"]': 'HTTP-8980'
@@ -52,9 +55,6 @@ casper.test.begin('Add Node to Requisition', 9, {
 			casper.click('.modal-dialog ul.dropdown-menu a[title="HTTP"]');
 		});
 		casper.waitWhileVisible('.modal-dialog ul.dropdown-menu');
-		casper.then(function() {
-			casper.capture('target/screenshots/dropdown.png');
-		});
 		casper.then(function() {
 			casper.click('.modal-dialog button.btn.btn-success');
 		});
