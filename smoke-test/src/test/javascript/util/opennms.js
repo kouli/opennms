@@ -1,5 +1,9 @@
 'use strict';
 
+Number.prototype.padLeft = function (n,str){
+	return Array(n-String(this).length+1).join(str||'0')+this;
+}
+
 var moment = require('moment');
 
 var defaultOptions = {
@@ -76,17 +80,39 @@ OpenNMS.prototype.enableScreenshots = function() {
 	}
 
 	var takeScreenshot = function(filename) {
-		self.casper.capture('target/screenshots/' + self.casper._screenshotNumber++ + '-' + filename);
+		self.casper.capture('target/screenshots/' + self.casper._screenshotNumber.padLeft(3) + '-' + filename);
+		self.casper._screenshotNumber++;
 	};
 
 	self.casper.options.onWaitTimeout = function() {
-		takeScreenshot('timeout-wait.png');
+		//console.log('wait timeout: ' + JSON.stringify(Array.prototype.slice.call(arguments)));
+		if (arguments[1].text) {
+			takeScreenshot('timeout-wait-' + cleanText(arguments[1].text) + '.png');
+		} else if (arguments[1].selector) {
+			takeScreenshot('timeout-wait-' + cleanText(arguments[1].selector) + '.png');
+		} else {
+			takeScreenshot('timeout-wait.png');
+		}
 	};
 	self.casper.options.onTimeout = function() {
-		takeScreenshot('timeout.png');
+		//console.log('timeout: ' + JSON.stringify(Array.prototype.slice.call(arguments)));
+		if (arguments[1].text) {
+			takeScreenshot('timeout-' + cleanText(arguments[1].text) + '.png');
+		} else if (arguments[1].selector) {
+			takeScreenshot('timeout-' + cleanText(arguments[1].selector) + '.png');
+		} else {
+			takeScreenshot('timeout.png');
+		}
 	};
 	self.casper.options.onStepTimeout = function() {
-		takeScreenshot('timeout-step.png');
+		//console.log('step timeout: ' + JSON.stringify(Array.prototype.slice.call(arguments)));
+		if (arguments[1].text) {
+			takeScreenshot('timeout-step-' + cleanText(arguments[1].text) + '.png');
+		} else if (arguments[1].selector) {
+			takeScreenshot('timeout-step-' + cleanText(arguments[1].selector) + '.png');
+		} else {
+			takeScreenshot('timeout-step.png');
+		}
 	};
 	if (!self.casper._screenshotsEnabled) {
 		self.casper.test.on('fail', function(failure) {
