@@ -7,6 +7,7 @@ casper.test.begin('Node List Page', 4, {
 	setUp: function() {
 		opennms.initialize();
 		opennms.login();
+		opennms.ensureNoRequisitions();
 		opennms.createOrReplaceRequisition('node-list-test', {
 			node: [
 				{
