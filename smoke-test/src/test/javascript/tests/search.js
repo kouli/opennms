@@ -7,6 +7,7 @@ casper.test.begin('Search Page', 20, {
 	setUp: function() {
 		opennms.initialize();
 		opennms.login();
+		opennms.ensureNoRequisitions();
 		casper.thenOpen(opennms.root() + '/element/index.jsp');
 	},
 

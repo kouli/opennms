@@ -216,6 +216,7 @@ casper.test.begin('OpenNMS Nav Bar Menu', 63, {
 		};
 
 		var testSelectorExists = function(selector, name) {
+			casper.waitForSelector(selector);
 			casper.then(function() {
 				test.assertExists(selector, name);
 			});
@@ -227,6 +228,7 @@ casper.test.begin('OpenNMS Nav Bar Menu', 63, {
 			}
 			for (var m=0, len=moveto.length; m < len; m++) {
 				var loc = moveto[m];
+				casper.waitForSelector(loc);
 				casper.then(function() {
 					this.mouseEvent('mouseover', loc);
 				});
